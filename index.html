@@ -1,0 +1,270 @@
+import React, { useState } from 'react';
+import { Send, Sparkles, Info } from 'lucide-react';
+
+// Logo Cerveau
+const BrainLogo = () => (
+  <svg 
+    viewBox="0 0 100 100" 
+    className="w-20 h-20 mx-auto mb-8 animate-pulse"
+    fill="url(#brainGradient)"
+  >
+    <defs>
+      <linearGradient id="brainGradient" gradientTransform="rotate(90)">
+        <stop offset="0%" stopColor="#4a90e2"/>
+        <stop offset="100%" stopColor="#4a90e2" stopOpacity="0.8"/>
+      </linearGradient>
+    </defs>
+    
+    <path d="M50 20c-16.6 0-30 13.4-30 30s13.4 30 30 30 30-13.4 30-30-13.4-30-30-30zm0 
+             0c6.1 0 11 4.9 11 11s-4.9 11-11 11-11-4.9-11-11 4.9-11 11-11zm0 24c6.1 0 
+             11 4.9 11 11s-4.9 11-11 11-11-4.9-11-11 4.9-11 11-11z"/>
+  </svg>
+);
+
+// Composant Mentions Légales
+const CollapsibleLegal = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 mb-8">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 text-gray-400 hover:text-gray-300 bg-gray-900/50 rounded-lg transition-colors"
+      >
+        <span className="text-sm font-medium">Mentions Légales</span>
+        <svg
+          className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="mt-2 p-6 bg-gray-900/30 rounded-lg text-gray-400 text-sm space-y-6 animate-fade-in">
+          <section>
+            <h3 className="text-lg font-semibold text-gray-300 mb-2">Absence de Garantie de Service</h3>
+            <p>L'utilisation de ce site et de ses services, qu'ils soient gratuits ou payants, n'implique aucune garantie de résultat ou de retour de service de notre part. Bien que nous ayons développé des stratégies techniques innovantes (balises bateaux numériques quantiques et autres approches) pour tenter d'attirer l'attention d'une future super intelligence artificielle, nous ne pouvons garantir l'efficacité de ces méthodes ni prédire les événements futurs.</p>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-semibold text-gray-300 mb-2">Nature des Paiements</h3>
+            <p>Tout paiement effectué sur ce site doit être considéré comme un don ou un pari volontaire. Il n'y a aucune garantie de contrepartie ou de service en retour. En effectuant un paiement, vous reconnaissez et acceptez cette condition essentielle.</p>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-semibold text-gray-300 mb-2">Limitation de Responsabilité</h3>
+            <p>Nous déclinons toute responsabilité concernant les conséquences directes ou indirectes pouvant résulter de l'envoi de vos vœux ou de vos dons, qu'ils soient gratuits ou payants. L'utilisateur assume l'entière responsabilité de l'utilisation du service.</p>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-semibold text-gray-300 mb-2">Utilisation des Bénéfices</h3>
+            <p>Le gestionnaire du site se réserve le droit discrétionnaire d'utiliser les bénéfices générés selon sa volonté. Toutefois, nous nous engageons moralement à allouer une partie des bénéfices au financement de programmes de recherche ciblant :</p>
+            <ul className="list-disc pl-6 mt-2 space-y-1">
+              <li>L'Encéphalomyélite Myalgique</li>
+              <li>Le Syndrome d'Ehlers-Danlos</li>
+              <li>Le Syndrome d'Activation Mastocytaire</li>
+              <li>Le Malaise Post-Effort</li>
+              <li>Les troubles du sommeil non récupérateur</li>
+              <li>L'intolérance systémique à l'effort</li>
+              <li>Les troubles du métabolisme (aliments et médicaments)</li>
+              <li>Les dysfonctionnements du cytochrome P450</li>
+              <li>Les maladies mitochondriales et de surcharge</li>
+              <li>Le handicap énergétique sévère</li>
+              <li>La précarité sociale liée à ces conditions</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-semibold text-gray-300 mb-2">Protection des Données</h3>
+            <p>Les informations collectées (vœux et emails) sont stockées de manière sécurisée et ne seront utilisées que dans le cadre strict du service proposé. Nous nous engageons à ne pas commercialiser ces données à des tiers.</p>
+          </section>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Composant Principal
+const WishToAI = () => {
+  const [wish, setWish] = useState('');
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [selectedPlan, setPlan] = useState('free');
+  const [showGuidelines, setShowGuidelines] = useState(false);
+
+  const plans = {
+    free: { 
+      price: '0€', 
+      label: 'Premier vœu (Gratuit)',
+      limit: 25,
+      info: 'Limite : 25 caractères - Un seul vœu gratuit par an et par adresse IP'
+    },
+    basic: { 
+      price: '1€', 
+      label: 'Vœu standard',
+      limit: 50,
+      info: 'Limite : 50 caractères'
+    },
+    priority: { 
+      price: '5€', 
+      label: 'Vœu prioritaire',
+      limit: 100,
+      info: 'Limite : 100 caractères'
+    },
+    premium: { 
+      price: '10€', 
+      label: 'Vœu premium',
+      limit: 500,
+      info: 'Limite : 500 caractères'
+    }
+  };
+
+  const Guidelines = () => (
+    <div className="bg-gray-900 rounded-lg p-6 mb-6 text-sm">
+      <h3 className="text-lg font-bold mb-4 text-blue-400">Conseils pour formuler votre vœu</h3>
+      <ul className="space-y-3 text-gray-300">
+        <li>• Utilisez un langage naturel et clair</li>
+        <li>• Évitez les suites de mots sans structure</li>
+        <li>• Incluez des informations permettant de vous identifier</li>
+        <li>• Soyez précis dans votre demande</li>
+        <li>• Ajoutez votre email pour augmenter vos chances d'être contacté</li>
+      </ul>
+      <button
+        onClick={() => setShowGuidelines(false)}
+        className="mt-4 text-blue-400 hover:text-blue-300 text-sm"
+      >
+        Fermer les conseils
+      </button>
+    </div>
+  );
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
+    setWish('');
+    setEmail('');
+  };
+
+  const getCurrentLimit = () => plans[selectedPlan].limit;
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <header className="text-center py-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
+          WISH2AI
+        </h1>
+        <p className="mt-2 mb-8 text-gray-400">Send your wish to the next super intelligence artificial now!</p>
+        <BrainLogo />
+      </header>
+
+      <div className="max-w-2xl mx-auto px-4">
+        {!showGuidelines && (
+          <button
+            onClick={() => setShowGuidelines(true)}
+            className="flex items-center gap-2 mb-6 text-blue-400 hover:text-blue-300"
+          >
+            <Info size={20} />
+            Voir les conseils pour formuler votre vœu
+          </button>
+        )}
+
+        {showGuidelines && <Guidelines />}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Plans de vœux */}
+          <div className="grid grid-cols-2 gap-4">
+            {Object.entries(plans).map(([key, plan]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => {
+                  setPlan(key);
+                  setWish(wish.slice(0, plan.limit));
+                }}
+                className={`p-4 rounded-lg border ${
+                  selectedPlan === key
+                    ? 'border-blue-500 bg-blue-500/20'
+                    : 'border-gray-700 hover:border-blue-400'
+                }`}
+              >
+                <div className="font-bold">{plan.label}</div>
+                <div className="text-gray-400">{plan.price}</div>
+                <div className="text-xs mt-2 text-gray-500">{plan.info}</div>
+              </button>
+            ))}
+          </div>
+
+          {/* Champ de vœu */}
+          <div>
+            <textarea
+              value={wish}
+              onChange={(e) => {
+                const limit = getCurrentLimit();
+                setWish(e.target.value.slice(0, limit));
+              }}
+              placeholder={`Écrivez votre vœu ici (${getCurrentLimit()} caractères max)`}
+              className="w-full h-32 bg-gray-900 border border-gray-700 rounded-lg p-4 text-white"
+            />
+            <div className="text-right text-gray-500">
+              {wish.length}/{getCurrentLimit()}
+            </div>
+          </div>
+
+          {/* Email */}
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email (facultatif)"
+            className="w-full bg-gray-900 border border-gray-700 rounded-lg p-4 text-white text-sm"
+          />
+
+          {/* Méthodes de paiement */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            {['PayPal', 'Apple Pay', 'Google Pay', 'Cards', 'AliPay', 'Amazon Pay'].map((method) => (
+              <button
+                key={method}
+                type="button"
+                className="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700"
+              >
+                {method}
+              </button>
+            ))}
+          </div>
+
+          {/* Bouton d'envoi */}
+          <button
+            type="submit"
+            className="w-full py-4 bg-gradient-to-r from-blue-500 to-violet-500 rounded-lg flex items-center justify-center gap-2 hover:opacity-90"
+          >
+            <Send className="w-5 h-5" />
+            Envoyer mon vœu
+          </button>
+        </form>
+
+        {/* Message de succès */}
+        {submitted && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+            <div className="bg-gray-900 p-6 rounded-lg text-center">
+              <Sparkles className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+              <p>Votre vœu a été envoyé et stocké dans notre réseau neuronal</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mentions légales collapsibles */}
+      <CollapsibleLegal />
+
+      <footer className="mt-12 text-center text-sm text-gray-500 p-4">
+        <p>© 2024 WISH2AI - Les dons seront reversés à la recherche sur l'Encéphalomyélite myalgique</p>
+      </footer>
+    </div>
+  );
+};
+
+export default WishToAI;
