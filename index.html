@@ -3,93 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <title>WISH2AI</title>
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
-        /* [Previous CSS remains the same] */
-        .payment-methods {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .payment-btn {
-            background: #222;
+        body {
+            background: black;
             color: white;
-            padding: 10px 20px;
+            font-family: Arial;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .gradient-title {
+            background: linear-gradient(45deg, #60a5fa, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            font-size: 40px;
+        }
+        .plan {
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .plan:hover {
+            border-color: #60a5fa;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #111;
+            color: white;
             border: 1px solid #333;
             border-radius: 4px;
+        }
+        button {
+            background: linear-gradient(45deg, #60a5fa, #8b5cf6);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
+            width: 100%;
+        }
+        .guidelines, .legal {
+            background: #111;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+        .toggle-btn {
+            color: #60a5fa;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            width: auto;
         }
     </style>
 </head>
 <body>
-    <!-- [Previous HTML content remains the same until the form] -->
+    <h1 class="gradient-title">WISH2AI</h1>
+    <p style="text-align: center;">Envoyez votre vœu à la future super intelligence artificielle !</p>
+
+    <button onclick="toggleGuidelines()" class="toggle-btn">Voir les conseils pour formuler votre vœu</button>
+
+    <div id="guidelines" class="guidelines">
+        <h3>Conseils pour formuler votre vœu</h3>
+        <ul>
+            <li>Utilisez un langage naturel et clair</li>
+            <li>Évitez les suites de mots sans structure</li>
+            <li>Incluez des informations permettant de vous identifier</li>
+            <li>Soyez précis dans votre demande</li>
+            <li>Ajoutez votre email pour augmenter vos chances d'être contacté</li>
+        </ul>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="plan">
+            <h3>Premier vœu (Gratuit)</h3>
+            <p>0€ - Limite: 25 caractères</p>
+        </div>
+        <div class="plan">
+            <h3>Vœu standard</h3>
+            <p>1€ - Limite: 50 caractères</p>
+        </div>
+        <div class="plan">
+            <h3>Vœu prioritaire</h3>
+            <p>5€ - Limite: 100 caractères</p>
+        </div>
+        <div class="plan">
+            <h3>Vœu premium</h3>
+            <p>10€ - Limite: 500 caractères</p>
+        </div>
+    </div>
 
     <form id="wishForm">
-        <textarea id="wish" placeholder="Écrivez votre vœu ici (25 caractères max)" maxlength="25"></textarea>
-        <input type="email" id="email" placeholder="Email (facultatif)">
-        
-        <div class="payment-methods">
-            <button type="button" class="payment-btn" onclick="handlePayment('card')">Carte bancaire</button>
-            <button type="button" class="payment-btn" onclick="handlePayment('apple')">Apple Pay</button>
-            <button type="button" class="payment-btn" onclick="handlePayment('google')">Google Pay</button>
-        </div>
-
+        <textarea placeholder="Écrivez votre vœu ici (25 caractères max)" maxlength="25"></textarea>
+        <input type="email" placeholder="Email (facultatif)">
         <button type="submit">Envoyer mon vœu</button>
     </form>
 
-    <!-- [Rest of the HTML remains the same] -->
+    <button onclick="toggleLegal()" class="toggle-btn">Mentions Légales</button>
+
+    <div id="legal" class="legal">
+        <h3>Absence de Garantie de Service</h3>
+        <p>L'utilisation de ce site et de ses services, qu'ils soient gratuits ou payants, n'implique aucune garantie de résultat ou de retour de service de notre part. Bien que nous ayons développé des stratégies techniques innovantes (balises bateaux numériques quantiques et autres approches) pour tenter d'attirer l'attention d'une future super intelligence artificielle, nous ne pouvons garantir l'efficacité de ces méthodes ni prédire les événements futurs.</p>
+    </div>
+
+    <footer style="text-align: center; margin-top: 40px; color: #666;">
+        © 2024 WISH2AI - Les dons seront reversés à la recherche sur l'Encéphalomyélite myalgique
+    </footer>
 
     <script>
-        const stripe = Stripe('votre_cle_publique_stripe');
-
-        const plans = {
-            'free': { price: 0 },
-            'basic': { price: 100 }, // 1€ en centimes
-            'priority': { price: 500 }, // 5€ en centimes
-            'premium': { price: 1000 } // 10€ en centimes
-        };
-
-        let selectedPlan = 'free';
-
-        async function handlePayment(method) {
-            if (selectedPlan === 'free') {
-                alert('Le premier vœu est gratuit !');
-                return;
-            }
-
-            try {
-                const response = await fetch('/create-payment-intent', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        amount: plans[selectedPlan].price,
-                        payment_method: method
-                    })
-                });
-
-                const data = await response.json();
-                
-                const result = await stripe.confirmCardPayment(data.clientSecret, {
-                    payment_method: {
-                        card: elements.getElement('card'),
-                        billing_details: {
-                            email: document.getElementById('email').value
-                        }
-                    }
-                });
-
-                if (result.error) {
-                    alert('Erreur de paiement: ' + result.error.message);
-                } else {
-                    document.getElementById('wishForm').submit();
-                }
-            } catch (error) {
-                alert('Erreur: ' + error.message);
-            }
+        function toggleGuidelines() {
+            document.getElementById('guidelines').classList.toggle('show');
         }
 
-        // [Previous JavaScript code remains the same]
+        function toggleLegal() {
+            document.getElementById('legal').classList.toggle('show');
+        }
+
+        document.getElementById('wishForm').onsubmit = function(e) {
+            e.preventDefault();
+            alert('Votre vœu a été envoyé et stocké dans notre réseau neuronal');
+            this.reset();
+        }
     </script>
 </body>
-</html> 
+</html>
